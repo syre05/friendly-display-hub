@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 export type InteractionMode = 'idle' | 'face' | 'voice' | 'touch';
 export type RecognitionStatus = 'inactive' | 'detecting' | 'recognized' | 'error';
+export type UserFlow = 'welcome' | 'identification' | 'confirmation' | 'menu' | 'interaction' | 'finish';
 
 interface TotemState {
   interactionMode: InteractionMode;
@@ -10,6 +11,7 @@ interface TotemState {
   userName: string | null;
   isListening: boolean;
   voiceCommand: string;
+  currentStep: UserFlow;
   
   // Acciones
   setInteractionMode: (mode: InteractionMode) => void;
@@ -18,6 +20,7 @@ interface TotemState {
   startListening: () => void;
   stopListening: () => void;
   setVoiceCommand: (command: string) => void;
+  setCurrentStep: (step: UserFlow) => void;
   resetTotem: () => void;
 }
 
@@ -27,6 +30,7 @@ export const useTotemStore = create<TotemState>((set) => ({
   userName: null,
   isListening: false,
   voiceCommand: '',
+  currentStep: 'welcome',
   
   setInteractionMode: (mode) => set({ interactionMode: mode }),
   setRecognitionStatus: (status) => set({ recognitionStatus: status }),
@@ -34,11 +38,13 @@ export const useTotemStore = create<TotemState>((set) => ({
   startListening: () => set({ isListening: true }),
   stopListening: () => set({ isListening: false, voiceCommand: '' }),
   setVoiceCommand: (command) => set({ voiceCommand: command }),
+  setCurrentStep: (step) => set({ currentStep: step }),
   resetTotem: () => set({
     interactionMode: 'idle',
     recognitionStatus: 'inactive',
     userName: null,
     isListening: false,
     voiceCommand: '',
+    currentStep: 'welcome',
   }),
 }));

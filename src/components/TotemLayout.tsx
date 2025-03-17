@@ -7,9 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface TotemLayoutProps {
   children: ReactNode;
+  showTabs?: boolean;
 }
 
-const TotemLayout = ({ children }: TotemLayoutProps) => {
+const TotemLayout = ({ children, showTabs = true }: TotemLayoutProps) => {
   const { interactionMode, setInteractionMode } = useTotemStore();
   
   const handleTabChange = (value: string) => {
@@ -27,31 +28,37 @@ const TotemLayout = ({ children }: TotemLayoutProps) => {
       
       {/* Contenido principal */}
       <main className="flex-1 overflow-auto container mx-auto py-6 px-4">
-        <Card className="shadow-lg border-none p-6 max-w-3xl mx-auto">
-          <Tabs 
-            defaultValue={interactionMode} 
-            onValueChange={handleTabChange}
-            className="w-full"
-          >
-            <TabsList className="grid grid-cols-3 mb-6">
-              <TabsTrigger value="face" className="flex items-center gap-2">
-                <ScanFace className="h-5 w-5" />
-                <span>Facial</span>
-              </TabsTrigger>
-              <TabsTrigger value="voice" className="flex items-center gap-2">
-                <Mic className="h-5 w-5" />
-                <span>Voz</span>
-              </TabsTrigger>
-              <TabsTrigger value="touch" className="flex items-center gap-2">
-                <Hand className="h-5 w-5" />
-                <span>Táctil</span>
-              </TabsTrigger>
-            </TabsList>
-            
+        <Card className="shadow-lg border-none p-6 max-w-4xl mx-auto">
+          {showTabs ? (
+            <Tabs 
+              defaultValue={interactionMode} 
+              onValueChange={handleTabChange}
+              className="w-full"
+            >
+              <TabsList className="grid grid-cols-3 mb-6">
+                <TabsTrigger value="face" className="flex items-center gap-2">
+                  <ScanFace className="h-5 w-5" />
+                  <span>Facial</span>
+                </TabsTrigger>
+                <TabsTrigger value="voice" className="flex items-center gap-2">
+                  <Mic className="h-5 w-5" />
+                  <span>Voz</span>
+                </TabsTrigger>
+                <TabsTrigger value="touch" className="flex items-center gap-2">
+                  <Hand className="h-5 w-5" />
+                  <span>Táctil</span>
+                </TabsTrigger>
+              </TabsList>
+              
+              <div className="min-h-[400px]">
+                {children}
+              </div>
+            </Tabs>
+          ) : (
             <div className="min-h-[400px]">
               {children}
             </div>
-          </Tabs>
+          )}
         </Card>
       </main>
       

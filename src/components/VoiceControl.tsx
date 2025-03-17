@@ -5,19 +5,30 @@ import { Mic, MicOff, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const VoiceControl = () => {
-  const { isListening, voiceCommand, startListening, stopListening, setVoiceCommand } = useTotemStore();
+  const { isListening, voiceCommand, startListening, stopListening, setVoiceCommand, setUserName, setCurrentStep } = useTotemStore();
   const [feedback, setFeedback] = useState('');
   
   // Simulación de reconocimiento de voz
   useEffect(() => {
     if (isListening) {
-      const phrases = ['Hola', 'Menú principal', 'Información', 'Ayuda'];
+      const phrases = ['Hola', 'Menú principal', 'Usuario Demo', 'Accediendo'];
       let counter = 0;
       
       const interval = setInterval(() => {
         if (counter < phrases.length) {
           setVoiceCommand(phrases[counter]);
           counter++;
+          
+          // Cuando detectamos el nombre de usuario (simulación)
+          if (counter === 3) {
+            setUserName('Usuario Demo');
+            
+            // Programar cambio al siguiente paso
+            setTimeout(() => {
+              setCurrentStep('confirmation');
+              stopListening();
+            }, 1500);
+          }
         } else {
           stopListening();
           clearInterval(interval);
@@ -30,19 +41,32 @@ const VoiceControl = () => {
       
       return () => clearInterval(interval);
     }
-  }, [isListening, stopListening, setVoiceCommand]);
+  }, [isListening, stopListening, setVoiceCommand, setUserName, setCurrentStep]);
   
   const handleVoiceControl = () => {
     if (isListening) {
       stopListening();
     } else {
       startListening();
-      setFeedback('Escuchando...');
+      setFeedback('Escuchando... Diga su nombre');
     }
   };
   
+  // Iniciar escucha automáticamente
+  useEffect(() => {
+    if (!isListening) {
+      handleVoiceControl();
+    }
+  }, []);
+  
   return (
-    <div className="flex flex-col items-center space-y-4 w-full">
+    <div className="flex flex-col items-center space-y-4 w-full py-8">
+      <h2 className="text-2xl font-bold mb-4 text-totem-primary">Control por Voz</h2>
+      
+      <p className="text-lg mb-4">
+        Por favor diga su nombre para identificarse
+      </p>
+      
       <Button 
         onClick={handleVoiceControl}
         className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
@@ -71,7 +95,7 @@ const VoiceControl = () => {
       
       <p className="text-sm text-muted-foreground">
         {isListening 
-          ? "Hable ahora para dar instrucciones..." 
+          ? "Hable ahora para identificarse..." 
           : "Pulse el botón para hablar"}
       </p>
     </div>
